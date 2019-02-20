@@ -46,19 +46,19 @@ namespace Discord_Bot
                 await Commands.NoCommand(context);
             }
         }
-        public async Task NoCommand(SocketCommandContext context, string text)
-        {
-            if (context.User.IsBot) return;
-            Console.WriteLine(text);
-            if (Config.channels.user.Contains(context.Channel.Id)
-             || Config.channels.admin.Contains(context.Channel.Id))
-            {
-                EmbedBuilder embed = new EmbedBuilder();
-                embed.WithColor(new Color(47, 191, 127));
-                embed.WithTitle("I can repeat you!");
-                embed.WithDescription(text);
+//        public async Task NoCommand(SocketCommandContext context, string text)
+//        {
+//            if (context.User.IsBot) return;
+//            Console.WriteLine(text);
+//            if (Config.channels.user.Contains(context.Channel.Id)
+//             || Config.channels.admin.Contains(context.Channel.Id))
+//            {
+//                EmbedBuilder embed = new EmbedBuilder();
+//                embed.WithColor(new Color(47, 191, 127));
+//                embed.WithTitle("I can repeat you!");
+//                embed.WithDescription(text);
 //                await context.Channel.SendMessageAsync("", false, embed.Build());
-            }
-        }
+//            }
+//        }
     }
 }
