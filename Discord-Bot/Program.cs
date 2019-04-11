@@ -29,6 +29,7 @@ namespace Discord_Bot
 
             this.handler = new CommandHandler();
             await this.handler.InitializeAsync(this.client);
+            await this.client.SetActivityAsync(new Game(Config.bot.cmdPrefix));
             while (true)
             {
                 string input = Console.ReadLine();

@@ -40,6 +40,17 @@ namespace Discord_Bot.Modules
             }
         }
 
+        [Command("activity")]
+        public async Task ChangeActivity([Remainder]string text)
+        {
+            if (Config.users.admin.Contains(Context.User.Id)
+             && Config.channels.admin.Contains(Context.Channel.Id))
+            {
+                await Context.Client.SetActivityAsync(new Game(text));
+                await Context.Channel.SendMessageAsync($"Changed Activity to \"{text}\"");
+            }
+        }
+
         [Command("say")]
         public async Task Say([Remainder]string text)
         {

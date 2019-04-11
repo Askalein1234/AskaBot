@@ -72,13 +72,13 @@ namespace Discord_Bot
 
         public static bool AddUserAdmin(ulong id)
         {
-            if (!users.admin.Contains(id)) return false;
+            if (users.admin.Contains(id)) return false;
             users.admin.Add(id);
             return true;
         }
         public static bool AddUserUser(ulong id)
         {
-            if (!users.user.Contains(id)) return false;
+            if (users.user.Contains(id)) return false;
             users.user.Add(id);
             return true;
         }
