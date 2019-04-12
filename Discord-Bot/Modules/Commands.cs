@@ -40,6 +40,31 @@ namespace Discord_Bot.Modules
             }
         }
 
+        [Command("test")]
+        public async Task Test()
+        {
+            await Test("no parameters");
+        }
+        [Command("test")]
+        public async Task Test([Remainder]string text)
+        {
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.WithTitle("Test result");
+            embed.WithColor(new Color(47, 191, 127));
+            embed.WithDescription($"This is the result of the requested test.\nIf you entered some parameters, you can have them back:\n{text}");
+            embed.AddField($"Field 1", "This is the 1st field", true);
+            embed.AddField($"Field 2", "This is the 2nd field", true);
+            embed.AddField($"Field 3", "This is the 3rd field", true);
+            embed.AddField($"Field 4", "This is the 4th field", true);
+            embed.AddField($"Field 5", "This is the 5th field", true);
+            embed.AddField($"Field 6", "This is the 6th field", true);
+            embed.AddField($"Field 7", "This is the 7th field", true);
+            embed.AddField($"Field 8", "This is the 8th field", true);
+            embed.AddField($"Field 9", "This is the 9th field", true);
+            embed.WithAuthor(Context.Client.CurrentUser);
+            await Context.Channel.SendMessageAsync("", false, embed.Build());
+        }
+
         [Command("help")]
         public async Task HelpMessage()
         {
@@ -47,21 +72,9 @@ namespace Discord_Bot.Modules
             embed.WithTitle("Available Commands");
             embed.WithColor(new Color(47, 191, 127));
             embed.WithDescription("Here\nwill\nbe\nthe\ncommands");
-            EmbedFieldBuilder[] fields = new EmbedFieldBuilder[3];
-            for (int i = 0; i < fields.Length; i++)
-            {
-                fields[i] = new EmbedFieldBuilder();
-                EmbedFieldBuilder field = fields[i];
-                if (i % 2 == 1) field.WithIsInline(true);
-                else field.WithIsInline(false);
-            }
-            fields[0].WithName($"{Config.bot.cmdPrefix}help");
-            fields[0].WithValue("Show this help");
-            fields[1].WithName($"{Config.bot.cmdPrefix}activity");
-            fields[1].WithValue("Change the activity shown.");
-            fields[2].WithName($"{Config.bot.cmdPrefix}say");
-            fields[2].WithValue("Let me repeat your message");
-            embed.WithFields(fields);
+            embed.AddField($"{Config.bot.cmdPrefix}help", "Show this help", true);
+            embed.AddField($"{Config.bot.cmdPrefix}activity - restricted access", "Change the activity shown.", true);
+            embed.AddField($"{Config.bot.cmdPrefix}say", "Let me repeat your message");
             embed.WithAuthor(Context.Client.CurrentUser);
             await Context.Channel.SendMessageAsync("", false, embed.Build());
         }
