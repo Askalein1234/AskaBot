@@ -40,6 +40,32 @@ namespace Discord_Bot.Modules
             }
         }
 
+        [Command("help")]
+        public async Task HelpMessage()
+        {
+            EmbedBuilder embed = new EmbedBuilder();
+            embed.WithTitle("Available Commands");
+            embed.WithColor(new Color(47, 191, 127));
+            embed.WithDescription("Here\nwill\nbe\nthe\ncommands");
+            EmbedFieldBuilder[] fields = new EmbedFieldBuilder[3];
+            for (int i = 0; i < fields.Length; i++)
+            {
+                fields[i] = new EmbedFieldBuilder();
+                EmbedFieldBuilder field = fields[i];
+                if (i % 2 == 1) field.WithIsInline(true);
+                else field.WithIsInline(false);
+            }
+            fields[0].WithName($"{Config.bot.cmdPrefix}help");
+            fields[0].WithValue("Show this help");
+            fields[1].WithName($"{Config.bot.cmdPrefix}activity");
+            fields[1].WithValue("Change the activity shown.");
+            fields[2].WithName($"{Config.bot.cmdPrefix}say");
+            fields[2].WithValue("Let me repeat your message");
+            embed.WithFields(fields);
+            embed.WithAuthor(Context.Client.CurrentUser);
+            await Context.Channel.SendMessageAsync("", false, embed.Build());
+        }
+
         [Command("activity")]
         public async Task ChangeActivity([Remainder]string text)
         {
