@@ -28,7 +28,9 @@ namespace Discord_Bot.Modules
         public static async Task NoCommand(SocketCommandContext context)
         {
             if (context.User.IsBot) return;
-            Console.WriteLine(context.Message);
+            string name = context.Guild.GetUser(context.User.Id).Nickname;
+            if (name.Length == 0) name = context.User.Username;
+            Console.WriteLine($"{name}@{context.Channel.Name}@{context.Guild.Name}: {context.Message}");
             if (Config.channels.user.Contains(context.Channel.Id)
              || Config.channels.admin.Contains(context.Channel.Id))
             {
@@ -41,12 +43,7 @@ namespace Discord_Bot.Modules
         }
 
         [Command("test")]
-        public async Task Test()
-        {
-            await Test("no parameters");
-        }
-        [Command("test")]
-        public async Task Test([Remainder]string text)
+        public async Task Test([Remainder]string text = "no parameters")
         {
             EmbedBuilder embed = new EmbedBuilder();
             embed.WithTitle("Test result");
