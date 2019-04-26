@@ -28,8 +28,7 @@ namespace Discord_Bot.Modules
         public static async Task NoCommand(SocketCommandContext context)
         {
             if (context.User.IsBot) return;
-            string name = (name = context.Guild.GetUser(context.User.Id).Nickname) == null ? context.User.Username : name;
-            Console.WriteLine($"{name}@{context.Channel.Name}@{context.Guild.Name}: {context.Message}");
+            Console.WriteLine($"{(context.Guild.GetUser(context.User.Id).Nickname == null ? context.User.Username : context.Guild.GetUser(context.User.Id).Nickname)}@{context.Channel.Name}@{context.Guild.Name}: {context.Message}");
             if (Config.channels.user.Contains(context.Channel.Id)
              || Config.channels.admin.Contains(context.Channel.Id))
             {
