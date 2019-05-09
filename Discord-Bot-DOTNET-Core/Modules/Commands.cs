@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,10 +25,10 @@ namespace Discord_Bot.Modules
 
         public Commands(MyService myService) => MyService = myService;
 
-        public static async Task NoCommand(SocketCommandContext context)
+        public static Task NoCommand(SocketCommandContext context)
         {
-            if (context.User.IsBot) return;
-            Console.WriteLine($"{(context.Guild.GetUser(context.User.Id).Nickname == null ? context.User.Username : context.Guild.GetUser(context.User.Id).Nickname)}@{context.Channel.Name}@{context.Guild.Name}: {context.Message}");
+            if (context.User.IsBot) return Task.CompletedTask;
+            Console.WriteLine($"{(context.Guild.GetUser(context.User.Id).Nickname ?? context.User.Username)}@{context.Channel.Name}@{context.Guild.Name}: {context.Message}");
             if (Config.channels.user.Contains(context.Channel.Id)
              || Config.channels.admin.Contains(context.Channel.Id))
             {
@@ -38,6 +38,7 @@ namespace Discord_Bot.Modules
                 embed.WithDescription(context.Message.ToString());
                 //                await context.Channel.SendMessageAsync("", false, embed.Build());
             }
+            return Task.CompletedTask;
         }
 
         [Command("test")]

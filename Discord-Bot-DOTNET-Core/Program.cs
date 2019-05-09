@@ -1,10 +1,7 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Discord;
 
 namespace Discord_Bot
 {
@@ -13,8 +10,7 @@ namespace Discord_Bot
         DiscordSocketClient client;
         CommandHandler handler;
 
-        static void Main(string[] args)
-        => new Program().StartAsync().GetAwaiter().GetResult();
+        public static void Main(string[] args) => new Program().StartAsync().GetAwaiter().GetResult();
 
         public async Task StartAsync()
         {
@@ -38,9 +34,10 @@ namespace Discord_Bot
             }
         }
 
-        private async Task Log(LogMessage msg)
+        private Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.Message);
+            return Task.CompletedTask;
         }
     }
 }
