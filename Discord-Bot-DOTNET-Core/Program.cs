@@ -7,34 +7,30 @@ namespace Discord_Bot
 {
     class Program
     {
-        DiscordSocketClient client;
-        CommandHandler handler;
+        public static ServiceCollection Services { get; } = new ServiceCollection();
+        private DiscordSocketClient _client;
+        private CommandHandler _handler;
 
         public static void Main(string[] args) => new Program().StartAsync().GetAwaiter().GetResult();
 
-        public async Task StartAsync()
+        private async Task StartAsync()
         {
             Console.WriteLine("The token:  You thought you would get my token here? Forget it!");
-            Console.WriteLine("The prefix: \"" + Config.bot.cmdPrefix + "\"");
+            Console.WriteLine("The prefix: \"" + Config.Bot.CmdPrefix + "\"");
 
-            if (Config.bot.token == null || Config.bot.token == "") return;
-            this.client = new DiscordSocketClient();
-            this.client.Log += Log;
-            await this.client.LoginAsync(TokenType.Bot, Config.bot.token);
-            await this.client.StartAsync();
+            if (string.IsNullOrEmpty(Config.Bot.Token)) return;
+            this._client = new DiscordSocketClient();
+            this._client.Log += Log;
+            await this._client.LoginAsync(TokenType.Bot, Config.Bot.Token);
+            await this._client.StartAsync();
 
-            this.handler = new CommandHandler();
-            await this.handler.InitializeAsync(this.client);
-            await this.client.SetActivityAsync(new Game(Config.bot.cmdPrefix));
-            while (true)
-            {
-                string input = Console.ReadLine();
-                if (input == "exit")
-                    break;
-            }
+            this._handler = new CommandHandler();
+            await this._handler.InitializeAsync(this._client);
+            await this._client.SetActivityAsync(new Game(Config.Bot.CmdPrefix));
+            while (!Console.ReadLine()?.Equals("exit") ?? false) { }
         }
 
-        private Task Log(LogMessage msg)
+        private static Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.Message);
             return Task.CompletedTask;
