@@ -8,100 +8,100 @@ using System.IO;
 
 namespace Discord_Bot
 {
-    class Config
+    internal static class Config
     {
-        private const string configFolder = "Resources";
-        private const string configFile = "config.json";
-        private const string channelFile = "channels.json";
-        private const string userFile = "users.json";
+        private const string ConfigFolder = "Resources";
+        private const string ConfigFile = "config.json";
+        private const string ChannelFile = "channels.json";
+        private const string UserFile = "users.json";
 
-        public static BotConfig bot;
-        public static BotIds channels;
-        public static BotIds users;
+        public static BotConfig Bot;
+        public static BotIds Channels;
+        public static BotIds Users;
 
         static Config()
         {
-            if (!Directory.Exists(configFolder))
-                Directory.CreateDirectory(configFolder);
-            if (!File.Exists(configFolder + "/" + configFile))
+            if (!Directory.Exists(ConfigFolder))
+                Directory.CreateDirectory(ConfigFolder);
+            if (!File.Exists(ConfigFolder + "/" + ConfigFile))
             {
-                bot = new BotConfig();
-                string json = JsonConvert.SerializeObject(bot, Formatting.Indented);
-                File.WriteAllText(configFolder + "/" + configFile, json);
+                Bot = new BotConfig();
+                string json = JsonConvert.SerializeObject(Bot, Formatting.Indented);
+                File.WriteAllText(ConfigFolder + "/" + ConfigFile, json);
             }
             else
             {
-                string json = File.ReadAllText(configFolder + "/" + configFile);
-                bot = JsonConvert.DeserializeObject<BotConfig>(json);
+                string json = File.ReadAllText(ConfigFolder + "/" + ConfigFile);
+                Bot = JsonConvert.DeserializeObject<BotConfig>(json);
             }
-            if (!File.Exists(configFolder + "/" + channelFile))
+            if (!File.Exists(ConfigFolder + "/" + ChannelFile))
             {
-                channels = new BotIds();
-                string json = JsonConvert.SerializeObject(channels, Formatting.Indented);
-                File.WriteAllText(configFolder + "/" + channelFile, json);
-            }
-            else
-            {
-                string json = File.ReadAllText(configFolder + "/" + channelFile);
-                channels = JsonConvert.DeserializeObject<BotIds>(json);
-            }
-            if (!File.Exists(configFolder + "/" + userFile))
-            {
-                users = new BotIds();
-                string json = JsonConvert.SerializeObject(users, Formatting.Indented);
-                File.WriteAllText(configFolder + "/" + userFile, json);
+                Channels = new BotIds();
+                string json = JsonConvert.SerializeObject(Channels, Formatting.Indented);
+                File.WriteAllText(ConfigFolder + "/" + ChannelFile, json);
             }
             else
             {
-                string json = File.ReadAllText(configFolder + "/" + userFile);
-                users = JsonConvert.DeserializeObject<BotIds>(json);
+                string json = File.ReadAllText(ConfigFolder + "/" + ChannelFile);
+                Channels = JsonConvert.DeserializeObject<BotIds>(json);
+            }
+            if (!File.Exists(ConfigFolder + "/" + UserFile))
+            {
+                Users = new BotIds();
+                string json = JsonConvert.SerializeObject(Users, Formatting.Indented);
+                File.WriteAllText(ConfigFolder + "/" + UserFile, json);
+            }
+            else
+            {
+                string json = File.ReadAllText(ConfigFolder + "/" + UserFile);
+                Users = JsonConvert.DeserializeObject<BotIds>(json);
             }
         }
         public static bool AddChannelAdmin(ulong id)
         {
-            if (channels.admin.Contains(id)) return false;
-            channels.admin.Add(id);
+            if (Channels.Admin.Contains(id)) return false;
+            Channels.Admin.Add(id);
             return true;
         }
         public static bool AddChannelUser(ulong id)
         {
-            if (channels.user.Contains(id)) return false;
-            channels.user.Add(id);
+            if (Channels.User.Contains(id)) return false;
+            Channels.User.Add(id);
             return true;
         }
 
         public static bool AddUserAdmin(ulong id)
         {
-            if (users.admin.Contains(id)) return false;
-            users.admin.Add(id);
+            if (Users.Admin.Contains(id)) return false;
+            Users.Admin.Add(id);
             return true;
         }
         public static bool AddUserUser(ulong id)
         {
-            if (users.user.Contains(id)) return false;
-            users.user.Add(id);
+            if (Users.User.Contains(id)) return false;
+            Users.User.Add(id);
             return true;
         }
         public static void Save()
         {
-            string json = JsonConvert.SerializeObject(bot, Formatting.Indented);
-            File.WriteAllText(configFolder + "/" + configFile, json);
-            json = JsonConvert.SerializeObject(channels, Formatting.Indented);
-            File.WriteAllText(configFolder + "/" + channelFile, json);
-            json = JsonConvert.SerializeObject(users, Formatting.Indented);
-            File.WriteAllText(configFolder + "/" + userFile, json);
+            var json = JsonConvert.SerializeObject(Bot, Formatting.Indented);
+            File.WriteAllText(ConfigFolder + "/" + ConfigFile, json);
+            json = JsonConvert.SerializeObject(Channels, Formatting.Indented);
+            File.WriteAllText(ConfigFolder + "/" + ChannelFile, json);
+            json = JsonConvert.SerializeObject(Users, Formatting.Indented);
+            File.WriteAllText(ConfigFolder + "/" + UserFile, json);
         }
     }
 
     public struct BotConfig
     {
-        public string token;
-        public string cmdPrefix;
+        public string Token;
+        public string CmdPrefix;
     }
 
     public struct BotIds
     {
-        public List<ulong> admin;
-        public List<ulong> user;
+        public List<ulong> Admin;
+        public List<ulong> User;
     }
 }

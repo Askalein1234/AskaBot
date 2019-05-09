@@ -13,29 +13,27 @@ namespace Discord_Bot
 {
     public class CommandHandler
     {
-        DiscordSocketClient client;
-        CommandService service;
-        IServiceProvider services;
+        private DiscordSocketClient Client { get; set; }
+        private CommandService Service { get; set; }
 
         public async Task InitializeAsync(DiscordSocketClient client)
         {
-            this.client = client;
-            this.service = new CommandService();
-            this.services = new Setup().BuildProvider();
-            this.client.MessageReceived += HandleCommandAsync;
-            await this.service.AddModulesAsync(Assembly.GetEntryAssembly(), services);
+            this.Client = client;
+            this.Service = new CommandService();
+            this.Client.MessageReceived += this.HandleCommandAsync;
+            await this.Service.AddModulesAsync(Assembly.GetEntryAssembly(), Program.Services.Provider);
         }
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
-            SocketUserMessage msg = s as SocketUserMessage;
-            if (msg == null) return;
-            SocketCommandContext context = new SocketCommandContext(this.client, msg);
-            int argPos = 0;
-            if (msg.HasStringPrefix(Config.bot.cmdPrefix, ref argPos)
-             && !context.IsPrivate)
+            if (!(s is SocketUserMessage msg)) return;
+            
+            var context = new SocketCommandContext(this.Client, msg);
+            var argPos = 0;
+            
+            if (msg.HasStringPrefix(Config.Bot.CmdPrefix,  ref argPos) && !context.IsPrivate)
             {
-                IResult result = await this.service.ExecuteAsync(context, argPos, services);
+                var result = await this.Service.ExecuteAsync(context, argPos, Program.Services.Provider);
                 if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
                 {
                     Console.WriteLine(result.ErrorReason);
