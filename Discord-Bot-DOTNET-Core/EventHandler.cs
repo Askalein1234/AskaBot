@@ -11,7 +11,7 @@ using Discord;
 
 namespace Discord_Bot
 {
-    public class CommandHandler
+    public class EventHandler
     {
         DiscordSocketClient client;
         CommandService service;

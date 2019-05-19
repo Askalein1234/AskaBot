@@ -8,7 +8,7 @@ namespace Discord_Bot
     class Program
     {
         DiscordSocketClient client;
-        CommandHandler handler;
+        EventHandler handler;
 
         public static void Main(string[] args) => new Program().StartAsync().GetAwaiter().GetResult();
 
@@ -23,7 +23,7 @@ namespace Discord_Bot
             await this.client.LoginAsync(TokenType.Bot, Config.bot.token);
             await this.client.StartAsync();
 
-            this.handler = new CommandHandler();
+            this.handler = new EventHandler();
             await this.handler.InitializeAsync(this.client);
             await this.client.SetActivityAsync(new Game(Config.bot.cmdPrefix));
             while (true)
