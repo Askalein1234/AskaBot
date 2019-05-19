@@ -10,6 +10,37 @@ namespace Discord_Bot
 {
     class Config
     {
+        private static string oneConf = "config1.json";
+
+        private static Bot config;
+
+        private struct Bot
+        {
+            private BotGeneral general;
+            private Dictionary<ulong, BotServer> servers;
+        }
+
+        private struct BotGeneral
+        {
+            private BotConfig bot;
+            private BotIds users;
+        }
+
+        private struct BotServer
+        {
+            private BotConfig bot;
+            private BotIds channels;
+            private BotIds users;
+            private Bot_otm_IDs gameRoles;
+        }
+
+
+
+
+
+
+        // The old stuff that works:
+
         private const string configFolder = "Resources";
         private const string configFile = "config.json";
         private const string channelFile = "channels.json";
