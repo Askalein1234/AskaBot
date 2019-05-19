@@ -41,6 +41,31 @@ namespace Discord_Bot.Modules
             return Task.CompletedTask;
         }
 
+        [Command("addGamingRole")]
+        public async Task AddGamingRole(string role)
+        {
+            if (Config.users.admin.Contains(Context.User.Id)
+             && Config.channels.admin.Contains(Context.Channel.Id))
+            {
+                if (Context.Message.MentionedRoles.Count() == 1)
+                {
+                    if (Config.AddGamingRole(Context.Message.MentionedRoles.First().Id))
+                    {
+                        Config.Save();
+                        await Context.Channel.SendMessageAsync("Added");
+                    }
+                    else
+                    {
+                        await Context.Channel.SendMessageAsync("That role is already registered.");
+                    }
+                }
+                else
+                {
+                    await Context.Channel.SendMessageAsync("You have to Mention exactly one Role");
+                }
+            }
+        }
+
         [Command("test")]
         public async Task Test([Remainder]string text = "no parameters")
         {

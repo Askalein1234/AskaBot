@@ -95,6 +95,12 @@ namespace Discord_Bot
             users.user.Add(id);
             return true;
         }
+        public static bool AddGamingRole(ulong id)
+        {
+            if (gameRoles.many.Contains(id)) return false;
+            gameRoles.many.Add(id);
+            return true;
+        }
         public static void Save()
         {
             string json = JsonConvert.SerializeObject(bot, Formatting.Indented);
@@ -103,6 +109,8 @@ namespace Discord_Bot
             File.WriteAllText(configFolder + "/" + channelFile, json);
             json = JsonConvert.SerializeObject(users, Formatting.Indented);
             File.WriteAllText(configFolder + "/" + userFile, json);
+            json = JsonConvert.SerializeObject(gameRoles, Formatting.Indented);
+            File.WriteAllText(configFolder + "/" + gameFile, json);
         }
     }
 

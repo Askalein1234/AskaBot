@@ -29,10 +29,11 @@ namespace Discord_Bot
 
         private async Task HandleRolesAsync(SocketGuildUser oldUser, SocketGuildUser newUser)
         {
-            IReadOnlyCollection<SocketRole> oldRoles = oldUser.Roles;
-            IReadOnlyCollection<SocketRole> newRoles = newUser.Roles;
-            IEnumerable<SocketRole> addedRoles = oldRoles.Where(x => !newRoles.Contains(x));
-
+            IEnumerable<SocketRole> gameRoles = newUser.Roles.Where(x => Config.gameRoles.many.Contains(x.Id));
+            if (gameRoles.Count() != 0 && !newUser.Roles.Contains(newUser.Guild.GetRole(Config.gameRoles.one)))
+            {
+                await newUser.AddRoleAsync(newUser.Guild.GetRole(Config.gameRoles.one));
+            }
         }
 
         private async Task HandleCommandAsync(SocketMessage s)
