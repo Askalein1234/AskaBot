@@ -14,10 +14,12 @@ namespace Discord_Bot
         private const string configFile = "config.json";
         private const string channelFile = "channels.json";
         private const string userFile = "users.json";
+        private const string gameFile = "gameRoles.json";
 
         public static BotConfig bot;
         public static BotIds channels;
         public static BotIds users;
+        public static Bot_otm_IDs gameRoles;
 
         static Config()
         {
@@ -55,6 +57,17 @@ namespace Discord_Bot
             {
                 string json = File.ReadAllText(configFolder + "/" + userFile);
                 users = JsonConvert.DeserializeObject<BotIds>(json);
+            }
+            if (!File.Exists(configFolder + "/" + gameFile))
+            {
+                gameRoles = new Bot_otm_IDs();
+                string json = JsonConvert.SerializeObject(gameRoles, Formatting.Indented);
+                File.WriteAllText(configFolder + "/" + gameFile, json);
+            }
+            else
+            {
+                string json = File.ReadAllText(configFolder + "/" + gameFile);
+                gameRoles = JsonConvert.DeserializeObject<Bot_otm_IDs>(json);
             }
         }
         public static bool AddChannelAdmin(ulong id)
@@ -103,5 +116,10 @@ namespace Discord_Bot
     {
         public List<ulong> admin;
         public List<ulong> user;
+    }
+    public struct Bot_otm_IDs
+    {
+        public ulong one;
+        public List<ulong> many;
     }
 }

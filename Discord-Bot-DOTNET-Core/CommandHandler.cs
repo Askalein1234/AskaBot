@@ -23,7 +23,16 @@ namespace Discord_Bot
             this.service = new CommandService();
             this.services = new Setup().BuildProvider();
             this.client.MessageReceived += HandleCommandAsync;
+            this.client.GuildMemberUpdated += HandleRolesAsync;
             await this.service.AddModulesAsync(Assembly.GetEntryAssembly(), services);
+        }
+
+        private async Task HandleRolesAsync(SocketGuildUser oldUser, SocketGuildUser newUser)
+        {
+            IReadOnlyCollection<SocketRole> oldRoles = oldUser.Roles;
+            IReadOnlyCollection<SocketRole> newRoles = newUser.Roles;
+            IEnumerable<SocketRole> addedRoles = oldRoles.Where(x => !newRoles.Contains(x));
+
         }
 
         private async Task HandleCommandAsync(SocketMessage s)
