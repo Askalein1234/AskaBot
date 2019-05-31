@@ -23,7 +23,7 @@ namespace Discord_Bot
             this.service = new CommandService();
             this.services = new Setup().BuildProvider();
             this.client.MessageReceived += HandleCommandAsync;
-            //this.client.GuildMemberUpdated += HandleRolesAsync;
+            this.client.GuildMemberUpdated += HandleRolesAsync;
             this.client.Connected += HandleConnectAsync;
             await this.service.AddModulesAsync(Assembly.GetEntryAssembly(), services);
         }
@@ -37,14 +37,25 @@ namespace Discord_Bot
             }
         }
 
-/*        private async Task HandleRolesAsync(SocketGuildUser oldUser, SocketGuildUser newUser)
+        private async Task HandleRolesAsync(SocketGuildUser oldUser, SocketGuildUser newUser)
         {
-            IEnumerable<SocketRole> gameRoles = newUser.Roles.Where(x => Config.gameRoles.many.Contains(x.Id));
-            if (gameRoles.Count() != 0 && !newUser.Roles.Contains(newUser.Guild.GetRole(Config.gameRoles.one)))
+            IEnumerable<SocketRole> roles = newUser.Roles;
+            List<List<ulong>> dependencies = new List<List<ulong>>();
+            foreach (SocketRole role in roles)
             {
-                await newUser.AddRoleAsync(newUser.Guild.GetRole(Config.gameRoles.one));
+                dependencies.Add(Config.getDependencies(newUser.Guild.Id, role.Id));
             }
-        }*/
+            foreach(List<ulong> dependency in dependencies)
+            {
+                foreach(ulong roleId in dependency)
+                {
+                    if (!newUser.Roles.Contains(newUser.Guild.GetRole(roleId)))
+                    {
+                        await newUser.AddRoleAsync(newUser.Guild.GetRole(roleId));
+                    }
+                }
+            }
+        }
 
         private async Task HandleCommandAsync(SocketMessage s)
         {

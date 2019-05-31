@@ -32,7 +32,7 @@ namespace Discord_Bot
             public BotConfig bot;
             public BotIds channels;
             public BotIds users;
-            public Bot_otm_IDs gameRoles;
+            public List<Bot_otm_IDs> dependencies;
         }
 
         private struct BotConfig
@@ -98,6 +98,19 @@ namespace Discord_Bot
             return serverConfig.bot.cmdPrefix ?? config.general.bot.cmdPrefix;
         }
 
+        public static List<ulong> getDependencies(ulong serverId, ulong roleId)
+        {
+            List<ulong> dependencies = new List<ulong>();
+            BotServer server;
+            if (!config.servers.TryGetValue(serverId, out server)) return dependencies;
+            IEnumerable<Bot_otm_IDs> deps = server.dependencies.Where(x => x.many.Contains(roleId));
+            foreach(Bot_otm_IDs dep in deps)
+            {
+                dependencies.Add(dep.one);
+            }
+            return dependencies;
+        }
+
         public static bool AddServer(ulong id)
         {
             if (KnowsServer(id)) return false;
@@ -106,7 +119,7 @@ namespace Discord_Bot
             newServer.channels.user = new List<ulong>();
             newServer.users.admin = new List<ulong>();
             newServer.users.user = new List<ulong>();
-            newServer.gameRoles.many = new List<ulong>();
+            newServer.dependencies = new List<Bot_otm_IDs>();
             config.servers.Add(id, newServer);
             Save();
             return true;
