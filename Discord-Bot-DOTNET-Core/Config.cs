@@ -10,155 +10,106 @@ namespace Discord_Bot
 {
     class Config
     {
-        private static string oneConf = "config1.json";
+        private const string configFolder = "Resources";
+        private const string oneConf = "config.json";
 
         private static Bot config;
 
         private struct Bot
         {
-            private BotGeneral general;
-            private Dictionary<ulong, BotServer> servers;
+            public BotGeneral general;
+            public Dictionary<ulong, BotServer> servers;
         }
 
         private struct BotGeneral
         {
-            private BotConfig bot;
-            private BotIds users;
+            public BotConfig bot;
+            public BotIds users;
         }
 
         private struct BotServer
         {
-            private BotConfig bot;
-            private BotIds channels;
-            private BotIds users;
-            private Bot_otm_IDs gameRoles;
+            public BotConfig bot;
+            public BotIds channels;
+            public BotIds users;
+            public Bot_otm_IDs gameRoles;
         }
 
+        private struct BotConfig
+        {
+            public string token;
+            public string cmdPrefix;
+        }
 
+        private struct BotIds
+        {
+            public List<ulong> admin;
+            public List<ulong> user;
+        }
 
-
-
-
-        // The old stuff that works:
-
-        private const string configFolder = "Resources";
-        private const string configFile = "config.json";
-        private const string channelFile = "channels.json";
-        private const string userFile = "users.json";
-        private const string gameFile = "gameRoles.json";
-
-        public static BotConfig bot;
-        public static BotIds channels;
-        public static BotIds users;
-        public static Bot_otm_IDs gameRoles;
+        private struct Bot_otm_IDs
+        {
+            public ulong one;
+            public List<ulong> many;
+        }
 
         static Config()
         {
             if (!Directory.Exists(configFolder))
                 Directory.CreateDirectory(configFolder);
-            if (!File.Exists(configFolder + "/" + configFile))
+            if (!File.Exists(configFolder + "/" + oneConf))
             {
-                bot = new BotConfig();
-                string json = JsonConvert.SerializeObject(bot, Formatting.Indented);
-                File.WriteAllText(configFolder + "/" + configFile, json);
+                config = new Bot();
+                string json = JsonConvert.SerializeObject(config, Formatting.Indented);
+                File.WriteAllText(configFolder + "/" + oneConf, json);
             }
             else
             {
-                string json = File.ReadAllText(configFolder + "/" + configFile);
-                bot = JsonConvert.DeserializeObject<BotConfig>(json);
+                string json = File.ReadAllText(configFolder + "/" + oneConf);
+                config = JsonConvert.DeserializeObject<Bot>(json);
             }
-            if (!File.Exists(configFolder + "/" + channelFile))
-            {
-                channels = new BotIds();
-                string json = JsonConvert.SerializeObject(channels, Formatting.Indented);
-                File.WriteAllText(configFolder + "/" + channelFile, json);
-            }
-            else
-            {
-                string json = File.ReadAllText(configFolder + "/" + channelFile);
-                channels = JsonConvert.DeserializeObject<BotIds>(json);
-            }
-            if (!File.Exists(configFolder + "/" + userFile))
-            {
-                users = new BotIds();
-                string json = JsonConvert.SerializeObject(users, Formatting.Indented);
-                File.WriteAllText(configFolder + "/" + userFile, json);
-            }
-            else
-            {
-                string json = File.ReadAllText(configFolder + "/" + userFile);
-                users = JsonConvert.DeserializeObject<BotIds>(json);
-            }
-            if (!File.Exists(configFolder + "/" + gameFile))
-            {
-                gameRoles = new Bot_otm_IDs();
-                string json = JsonConvert.SerializeObject(gameRoles, Formatting.Indented);
-                File.WriteAllText(configFolder + "/" + gameFile, json);
-            }
-            else
-            {
-                string json = File.ReadAllText(configFolder + "/" + gameFile);
-                gameRoles = JsonConvert.DeserializeObject<Bot_otm_IDs>(json);
-            }
-        }
-        public static bool AddChannelAdmin(ulong id)
-        {
-            if (channels.admin.Contains(id)) return false;
-            channels.admin.Add(id);
-            return true;
-        }
-        public static bool AddChannelUser(ulong id)
-        {
-            if (channels.user.Contains(id)) return false;
-            channels.user.Add(id);
-            return true;
         }
 
-        public static bool AddUserAdmin(ulong id)
-        {
-            if (users.admin.Contains(id)) return false;
-            users.admin.Add(id);
-            return true;
-        }
-        public static bool AddUserUser(ulong id)
-        {
-            if (users.user.Contains(id)) return false;
-            users.user.Add(id);
-            return true;
-        }
-        public static bool AddGamingRole(ulong id)
-        {
-            if (gameRoles.many.Contains(id)) return false;
-            gameRoles.many.Add(id);
-            return true;
-        }
         public static void Save()
         {
-            string json = JsonConvert.SerializeObject(bot, Formatting.Indented);
-            File.WriteAllText(configFolder + "/" + configFile, json);
-            json = JsonConvert.SerializeObject(channels, Formatting.Indented);
-            File.WriteAllText(configFolder + "/" + channelFile, json);
-            json = JsonConvert.SerializeObject(users, Formatting.Indented);
-            File.WriteAllText(configFolder + "/" + userFile, json);
-            json = JsonConvert.SerializeObject(gameRoles, Formatting.Indented);
-            File.WriteAllText(configFolder + "/" + gameFile, json);
+            string json = JsonConvert.SerializeObject(config, Formatting.Indented);
+            File.WriteAllText(configFolder + "/" + oneConf, json);
         }
-    }
 
-    public struct BotConfig
-    {
-        public string token;
-        public string cmdPrefix;
-    }
+        public static string GetGlobalPrefix()
+        {
+            return config.general.bot.cmdPrefix;
+        }
 
-    public struct BotIds
-    {
-        public List<ulong> admin;
-        public List<ulong> user;
-    }
-    public struct Bot_otm_IDs
-    {
-        public ulong one;
-        public List<ulong> many;
+        public static string GetToken()
+        {
+            return config.general.bot.token;
+        }
+
+        public static bool KnowsServer(ulong id)
+        {
+            return config.servers.Keys.Contains(id);
+        }
+
+        public static string GetServerPrefix(ulong id)
+        {
+            BotServer serverConfig;
+            if (!config.servers.TryGetValue(id, out serverConfig)) return config.general.bot.cmdPrefix;
+            return serverConfig.bot.cmdPrefix ?? config.general.bot.cmdPrefix;
+        }
+
+        public static bool AddServer(ulong id)
+        {
+            if (KnowsServer(id)) return false;
+            BotServer newServer = new BotServer();
+            newServer.channels.admin = new List<ulong>();
+            newServer.channels.user = new List<ulong>();
+            newServer.users.admin = new List<ulong>();
+            newServer.users.user = new List<ulong>();
+            newServer.gameRoles.many = new List<ulong>();
+            config.servers.Add(id, newServer);
+            Save();
+            return true;
+        }
     }
 }

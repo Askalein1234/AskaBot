@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Discord_Bot.Modules
@@ -29,7 +30,7 @@ namespace Discord_Bot.Modules
         {
             if (context.User.IsBot) return Task.CompletedTask;
             Console.WriteLine($"{(context.Guild.GetUser(context.User.Id).Nickname ?? context.User.Username)}@{context.Channel.Name}@{context.Guild.Name}: {context.Message}");
-            if (Config.channels.user.Contains(context.Channel.Id)
+/*            if (Config.channels.user.Contains(context.Channel.Id)
              || Config.channels.admin.Contains(context.Channel.Id))
             {
                 EmbedBuilder embed = new EmbedBuilder();
@@ -37,11 +38,11 @@ namespace Discord_Bot.Modules
                 embed.WithTitle("I can repeat you!");
                 embed.WithDescription(context.Message.ToString());
                 //                await context.Channel.SendMessageAsync("", false, embed.Build());
-            }
+            }*/
             return Task.CompletedTask;
         }
 
-        [Command("addGamingRole")]
+ /*       [Command("addGamingRole")]
         public async Task AddGamingRole(string role)
         {
             if (Config.users.admin.Contains(Context.User.Id)
@@ -64,7 +65,7 @@ namespace Discord_Bot.Modules
                     await Context.Channel.SendMessageAsync("You have to Mention exactly one Role");
                 }
             }
-        }
+        }*/
 
         [Command("test")]
         public async Task Test([Remainder]string text = "no parameters")
@@ -89,18 +90,19 @@ namespace Discord_Bot.Modules
         [Command("help")]
         public async Task HelpMessage()
         {
+            ulong guild = Context.Guild.Id;
             EmbedBuilder embed = new EmbedBuilder();
             embed.WithTitle("Available Commands");
             embed.WithColor(new Color(47, 191, 127));
-            embed.WithDescription("Here\nwill\nbe\nthe\ncommands");
-            embed.AddField($"{Config.bot.cmdPrefix}help", "Show this help", true);
-            embed.AddField($"{Config.bot.cmdPrefix}activity - restricted access", "Change the activity shown.", true);
-            embed.AddField($"{Config.bot.cmdPrefix}say", "Let me repeat your message");
+            embed.WithDescription("currently no functionality guaranteed.");
+            embed.AddField($"{Config.GetServerPrefix(guild)}help", "Show this help", true);
+            embed.AddField($"{Config.GetServerPrefix(guild)}activity - restricted access", "Change the activity shown.", true);
+            embed.AddField($"{Config.GetServerPrefix(guild)}say", "Let me repeat your message");
             embed.WithAuthor(Context.Client.CurrentUser);
             await Context.Channel.SendMessageAsync("", false, embed.Build());
         }
 
-        [Command("activity")]
+/*        [Command("activity")]
         public async Task ChangeActivity([Remainder]string text)
         {
             if (Config.users.admin.Contains(Context.User.Id)
@@ -109,7 +111,7 @@ namespace Discord_Bot.Modules
                 await Context.Client.SetActivityAsync(new Game(text));
                 await Context.Channel.SendMessageAsync($"Changed Activity to \"{text}\"");
             }
-        }
+        }*/
 
         [Command("say")]
         public async Task Say([Remainder]string text)
@@ -126,7 +128,7 @@ namespace Discord_Bot.Modules
             }
         }
 
-        [Command("caa")]
+/*        [Command("caa")]
         public async Task AddAdminChannel()
         {
             if (Config.users.admin.Contains(Context.User.Id))
@@ -205,6 +207,6 @@ namespace Discord_Bot.Modules
                     await Context.Channel.SendMessageAsync("added");
                 }
             }
-        }
+        }*/
     }
 }

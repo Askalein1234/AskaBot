@@ -23,18 +23,28 @@ namespace Discord_Bot
             this.service = new CommandService();
             this.services = new Setup().BuildProvider();
             this.client.MessageReceived += HandleCommandAsync;
-            this.client.GuildMemberUpdated += HandleRolesAsync;
+            //this.client.GuildMemberUpdated += HandleRolesAsync;
+            this.client.Connected += HandleConnectAsync;
             await this.service.AddModulesAsync(Assembly.GetEntryAssembly(), services);
         }
 
-        private async Task HandleRolesAsync(SocketGuildUser oldUser, SocketGuildUser newUser)
+        private async Task HandleConnectAsync()
+        {
+            IEnumerable<SocketGuild> guilds = this.client.Guilds;
+            foreach (SocketGuild guild in guilds)
+            {
+                Config.AddServer(guild.Id);
+            }
+        }
+
+/*        private async Task HandleRolesAsync(SocketGuildUser oldUser, SocketGuildUser newUser)
         {
             IEnumerable<SocketRole> gameRoles = newUser.Roles.Where(x => Config.gameRoles.many.Contains(x.Id));
             if (gameRoles.Count() != 0 && !newUser.Roles.Contains(newUser.Guild.GetRole(Config.gameRoles.one)))
             {
                 await newUser.AddRoleAsync(newUser.Guild.GetRole(Config.gameRoles.one));
             }
-        }
+        }*/
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
@@ -42,7 +52,7 @@ namespace Discord_Bot
             if (msg == null) return;
             SocketCommandContext context = new SocketCommandContext(this.client, msg);
             int argPos = 0;
-            if (msg.HasStringPrefix(Config.bot.cmdPrefix, ref argPos)
+            if (msg.HasStringPrefix(Config.GetServerPrefix(context.Guild.Id), ref argPos)
              && !context.IsPrivate)
             {
                 IResult result = await this.service.ExecuteAsync(context, argPos, services);

@@ -15,22 +15,25 @@ namespace Discord_Bot
         public async Task StartAsync()
         {
             Console.WriteLine("The token:  You thought you would get my token here? Forget it!");
-            Console.WriteLine("The prefix: \"" + Config.bot.cmdPrefix + "\"");
+            Console.WriteLine($"The prefix: \"{Config.GetGlobalPrefix()}\"");
 
-            if (Config.bot.token == null || Config.bot.token == "") return;
+            if (Config.GetToken() == null || Config.GetToken() == "") return;
             this.client = new DiscordSocketClient();
             this.client.Log += Log;
-            await this.client.LoginAsync(TokenType.Bot, Config.bot.token);
+            await this.client.LoginAsync(TokenType.Bot, Config.GetToken());
             await this.client.StartAsync();
 
             this.handler = new EventHandler();
             await this.handler.InitializeAsync(this.client);
-            await this.client.SetActivityAsync(new Game(Config.bot.cmdPrefix));
+            await this.client.SetActivityAsync(new Game($"{Config.GetGlobalPrefix()}help", ActivityType.Listening));
             while (true)
             {
                 string input = Console.ReadLine();
                 if (input == "exit")
+                {
+                    Config.Save();
                     break;
+                }
             }
         }
 
