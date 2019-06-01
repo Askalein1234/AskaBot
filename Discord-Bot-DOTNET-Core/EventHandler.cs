@@ -33,7 +33,7 @@ namespace Discord_Bot
             IEnumerable<SocketGuild> guilds = this.client.Guilds;
             foreach (SocketGuild guild in guilds)
             {
-                Config.AddServer(guild.Id);
+                Config.AddServer(guild.Id, guild.Name);
             }
         }
 
@@ -43,7 +43,7 @@ namespace Discord_Bot
             List<List<ulong>> dependencies = new List<List<ulong>>();
             foreach (SocketRole role in roles)
             {
-                dependencies.Add(Config.getDependencies(newUser.Guild.Id, role.Id));
+                dependencies.Add(Config.GetDependencies(newUser.Guild.Id, role.Id));
             }
             foreach(List<ulong> dependency in dependencies)
             {

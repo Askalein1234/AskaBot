@@ -29,6 +29,7 @@ namespace Discord_Bot
 
         private struct BotServer
         {
+            public string name;
             public BotConfig bot;
             public BotIds channels;
             public BotIds users;
@@ -88,21 +89,24 @@ namespace Discord_Bot
 
         public static bool KnowsServer(ulong id)
         {
-            return config.servers.Keys.Contains(id);
+            return config.servers.TryGetValue(id, out BotServer server);
+        }
+
+        private static bool KnowsServer(ulong id, out BotServer server)
+        {
+            return config.servers.TryGetValue(id, out server);
         }
 
         public static string GetServerPrefix(ulong id)
         {
-            BotServer serverConfig;
-            if (!config.servers.TryGetValue(id, out serverConfig)) return config.general.bot.cmdPrefix;
+            if (!config.servers.TryGetValue(id, out BotServer serverConfig)) return config.general.bot.cmdPrefix;
             return serverConfig.bot.cmdPrefix ?? config.general.bot.cmdPrefix;
         }
 
-        public static List<ulong> getDependencies(ulong serverId, ulong roleId)
+        public static List<ulong> GetDependencies(ulong serverId, ulong roleId)
         {
             List<ulong> dependencies = new List<ulong>();
-            BotServer server;
-            if (!config.servers.TryGetValue(serverId, out server)) return dependencies;
+            if (!config.servers.TryGetValue(serverId, out BotServer server)) return dependencies;
             IEnumerable<Bot_otm_IDs> deps = server.dependencies.Where(x => x.many.Contains(roleId));
             foreach(Bot_otm_IDs dep in deps)
             {
@@ -111,10 +115,14 @@ namespace Discord_Bot
             return dependencies;
         }
 
-        public static bool AddServer(ulong id)
+        public static bool AddServer(ulong id, string name)
         {
+            UpdateServerName(id, name);
             if (KnowsServer(id)) return false;
-            BotServer newServer = new BotServer();
+            BotServer newServer = new BotServer
+            {
+                name = name
+            };
             newServer.channels.admin = new List<ulong>();
             newServer.channels.user = new List<ulong>();
             newServer.users.admin = new List<ulong>();
@@ -123,6 +131,14 @@ namespace Discord_Bot
             config.servers.Add(id, newServer);
             Save();
             return true;
+        }
+
+        public static string UpdateServerName(ulong id, string name)
+        {
+            if (!config.servers.TryGetValue(id, out BotServer server)) return null;
+            string oldName = server.name;
+            server.name = name;
+            return oldName;
         }
     }
 }
