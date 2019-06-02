@@ -26,13 +26,20 @@ namespace Discord_Bot
             this.handler = new EventHandler();
             await this.handler.InitializeAsync(this.client);
             await this.client.SetActivityAsync(new Game($"{Config.GetGlobalPrefix()}help", ActivityType.Listening));
-            while (true)
+            bool run = true;
+            while (run)
             {
                 string input = Console.ReadLine();
-                if (input == "exit")
+                switch (input)
                 {
-                    Config.Save();
-                    break;
+                    case "exit":
+                        Config.Save();
+                        run = false;
+                        break;
+                    case "config reload":
+                        Config.Reload();
+                        break;
+
                 }
             }
         }

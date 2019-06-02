@@ -68,23 +68,9 @@ namespace Discord_Bot.Modules
         }*/
 
         [Command("test")]
-        public async Task Test([Remainder]string text = "no parameters")
+        public async Task Test(string text)
         {
-            EmbedBuilder embed = new EmbedBuilder();
-            embed.WithTitle("Test result");
-            embed.WithColor(new Color(47, 191, 127));
-            embed.WithDescription($"This is the result of the requested test.\nIf you entered some parameters, you can have them back:\n{text}");
-            embed.AddField($"Field 1", "This is the 1st field", true);
-            embed.AddField($"Field 2", "This is the 2nd field", true);
-            embed.AddField($"Field 3", "This is the 3rd field", true);
-            embed.AddField($"Field 4", "This is the 4th field", true);
-            embed.AddField($"Field 5", "This is the 5th field", true);
-            embed.AddField($"Field 6", "This is the 6th field", true);
-            embed.AddField($"Field 7", "This is the 7th field", true);
-            embed.AddField($"Field 8", "This is the 8th field", true);
-            embed.AddField($"Field 9", "This is the 9th field", true);
-            embed.WithAuthor(Context.Client.CurrentUser);
-            await Context.Channel.SendMessageAsync("", false, embed.Build());
+            await Context.Channel.SendMessageAsync(text);
         }
 
         [Command("help")]
@@ -102,16 +88,42 @@ namespace Discord_Bot.Modules
             await Context.Channel.SendMessageAsync("", false, embed.Build());
         }
 
-/*        [Command("activity")]
-        public async Task ChangeActivity([Remainder]string text)
+        [Command("activity")]
+        public async Task ChangeActivity(string option, [Remainder]string text = "Nothing")
         {
-            if (Config.users.admin.Contains(Context.User.Id)
-             && Config.channels.admin.Contains(Context.Channel.Id))
+            ulong serverId = Context.Guild.Id;
+            ulong userId = Context.User.Id;
+            ulong channelId = Context.Channel.Id;
+            if (Config.GetUserPermissionLevel(serverId, userId).Equals(Config.Permission.ADMIN)
+             && Config.GetChannelPermissionLevel(serverId, channelId).Equals(Config.Permission.ADMIN))
             {
-                await Context.Client.SetActivityAsync(new Game(text));
-                await Context.Channel.SendMessageAsync($"Changed Activity to \"{text}\"");
+                ActivityType activity;
+                switch (option)
+                {
+                    case "--listening" :
+                        activity = ActivityType.Listening;
+                        break;
+                    case "--playing" :
+                        activity = ActivityType.Playing;
+                        break;
+                    case "--streaming" :
+                        activity = ActivityType.Streaming;
+                        break;
+                    case "--watching" :
+                        activity = ActivityType.Watching;
+                        break;
+                    case "--reset" :
+                        activity = ActivityType.Listening;
+                        text = "/$help";
+                        break;
+                    default :
+                        await Context.Channel.SendMessageAsync("Invalid option, use --listening, --playing, --streaming, --watching or --reset.");
+                        return;
+                }
+                await Context.Client.SetActivityAsync(new Game(text, activity));
+                await Context.Channel.SendMessageAsync($"Changed Activity to \"{text}\" of type {activity.ToString()}");
             }
-        }*/
+        }
 
         [Command("say")]
         public async Task Say([Remainder]string text)

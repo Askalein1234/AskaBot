@@ -10,6 +10,11 @@ namespace Discord_Bot
 {
     class Config
     {
+        public enum Permission
+        {
+            NONE, USER, ADMIN
+        }
+
         private const string configFolder = "Resources";
         private const string oneConf = "config.json";
 
@@ -137,8 +142,33 @@ namespace Discord_Bot
         {
             if (!config.servers.TryGetValue(id, out BotServer server)) return null;
             string oldName = server.name;
-            server.name = name;
+            if (name != null)
+                server.name = name;
             return oldName;
+        }
+
+        public static Permission GetUserPermissionLevel(ulong serverId, ulong userId)
+        {
+            if (config.general.users.admin.Contains(userId)) return Permission.ADMIN;
+            if (config.general.users.user.Contains(userId)) return Permission.USER;
+            if (!config.servers.TryGetValue(serverId, out BotServer server)) return Permission.NONE;
+            if (server.users.admin.Contains(userId)) return Permission.ADMIN;
+            if (server.users.user.Contains(userId)) return Permission.USER;
+            return Permission.NONE;
+        }
+
+        public static Permission GetChannelPermissionLevel(ulong serverId, ulong channelId)
+        {
+            if (!config.servers.TryGetValue(serverId, out BotServer server)) return Permission.NONE;
+            if (server.channels.admin.Contains(channelId)) return Permission.ADMIN;
+            if (server.channels.user.Contains(channelId)) return Permission.USER;
+            return Permission.NONE;
+        }
+
+        public static void Reload()
+        {
+            string json = File.ReadAllText(configFolder + "/" + oneConf);
+            config = JsonConvert.DeserializeObject<Bot>(json);
         }
     }
 }
