@@ -59,8 +59,7 @@ namespace Discord_Bot
 
         private async Task HandleCommandAsync(SocketMessage s)
         {
-            SocketUserMessage msg = s as SocketUserMessage;
-            if (msg == null) return;
+            if (!(s is SocketUserMessage msg)) return;
             SocketCommandContext context = new SocketCommandContext(this.client, msg);
             int argPos = 0;
             if (msg.HasStringPrefix(Config.GetServerPrefix(context.Guild.Id), ref argPos)

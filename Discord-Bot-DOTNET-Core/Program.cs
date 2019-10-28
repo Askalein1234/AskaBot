@@ -42,6 +42,7 @@ namespace Discord_Bot
 
                 }
             }
+            await this.client.LogoutAsync();
         }
 
         private Task Log(LogMessage msg)

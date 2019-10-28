@@ -22,39 +22,74 @@ namespace Discord_Bot
 
         private struct Bot
         {
+            public Bot(object ignore = null)
+            {
+                general = new BotGeneral();
+                servers = new Dictionary<ulong, BotServer>();
+            }
             public BotGeneral general;
             public Dictionary<ulong, BotServer> servers;
         }
 
         private struct BotGeneral
         {
+            public BotGeneral(object ignore = null)
+            {
+                bot = new BotConfig();
+                users = new BotIds();
+            }
             public BotConfig bot;
             public BotIds users;
         }
 
         private struct BotServer
         {
+            public BotServer(object ignore = null)
+            {
+                name = "";
+                bot = new BotConfig();
+                channels = new BotIds();
+                users = new BotIds();
+                dependencies = new List<Bot_otm_IDs>();
+                disabledFeatures = new List<string>();
+            }
             public string name;
             public BotConfig bot;
             public BotIds channels;
             public BotIds users;
             public List<Bot_otm_IDs> dependencies;
+            public List<string> disabledFeatures;
         }
 
         private struct BotConfig
         {
+            public BotConfig(object ignore = null)
+            {
+                token = null;
+                cmdPrefix = null;
+            }
             public string token;
             public string cmdPrefix;
         }
 
         private struct BotIds
         {
+            public BotIds(object ignore = null)
+            {
+                admin = new List<ulong>();
+                user = new List<ulong>();
+            }
             public List<ulong> admin;
             public List<ulong> user;
         }
 
         private struct Bot_otm_IDs
         {
+            public Bot_otm_IDs(object ignore = null)
+            {
+                one = 0;
+                many = new List<ulong>();
+            }
             public ulong one;
             public List<ulong> many;
         }
